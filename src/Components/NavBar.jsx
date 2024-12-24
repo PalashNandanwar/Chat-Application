@@ -1,102 +1,59 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-// import React, { useState } from "react";
+
+import React from "react";
 import { Link } from "react-router-dom";
-import { Button } from "@material-tailwind/react";
-import { AiOutlineMenu } from "react-icons/ai";
-import { useState } from "react";
+import { useUser } from "@clerk/clerk-react";
+import { CgProfile } from "react-icons/cg";
+
 
 const NavBar = ({ user, setUser }) => {
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { isSignedIn, user: clerkUser } = useUser();
 
-    const toggleMobileMenu = () => {
-        setIsMobileMenuOpen(!isMobileMenuOpen);
-    };
-
-    const handleLogout = () => {
-        setUser(null);
-    };
+    // Update user state on login/logout
+    React.useEffect(() => {
+        if (isSignedIn) {
+            setUser(clerkUser);
+        } else {
+            setUser(null);
+        }
+    }, [isSignedIn, clerkUser, setUser]);
 
     return (
-        <nav className="flex flex-wrap items-center justify-between bg-gray-100 p-4 border-b border-gray-300">
-            <h1 className="text-xl font-bold">Chatting App</h1>
-            <div className="hidden md:flex gap-[2rem] items-center">
-                <Link to="/">
-                    <Button variant="outlined" className="px-4 py-1">
-                        Home
-                    </Button>
+        <nav className="flex justify-between items-center bg-blue-500 p-4">
+            <h1 className="text-white text-lg font-bold">Chat Application</h1>
+            <div className="flex items-center gap-4">
+                <Link to="/" className="text-white">
+                    Home
                 </Link>
-                <Link to="/Group-Chat">
-                    <Button variant="outlined" className="px-4 py-1">
-                        Join Group Chat
-                    </Button>
-                </Link>
-                <Link to="/Single-chat">
-                    <Button variant="outlined" className="px-4 py-1">
-                        Start Chating with your friends
-                    </Button>
-                </Link>
-                {user ? (
-                    <div className="flex items-center gap-2">
-                        <span className="text-lg font-medium">Welcome, {user}</span>
-                        <button
-                            onClick={handleLogout}
-                            className="px-4 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600"
-                        >
-                            Logout
-                        </button>
+                {isSignedIn && (
+                    <>
+                        <Link to="/Single-chat" className="text-white">
+                            Private Chat
+                        </Link>
+                        <Link to="/Group-Chat" className="text-white">
+                            Group Chat
+                        </Link>
+                    </>
+                )}
+                {isSignedIn ? (
+                    <div>
+                        <Link to='/Profile'>
+                            <span className=" text-lg"><CgProfile /></span>
+                        </Link>
                     </div>
                 ) : (
-                    <Link to="/login">
-                        <Button variant="outlined" className="px-4 py-1">
+
+                    <div className=" flex gap-4">
+                        <Link to="/login" className="text-white">
                             Login
-                        </Button>
-                    </Link>
+                        </Link>
+                        <Link to="/signUp" className="text-white">
+                            signup
+                        </Link>
+                    </div>
                 )}
             </div>
-            <div className="md:hidden">
-                <button
-                    onClick={toggleMobileMenu}
-                    className="text-black focus:outline-none text-2xl"
-                >
-                    <AiOutlineMenu />
-                </button>
-            </div>
-            {isMobileMenuOpen && (
-                <div className="w-full mt-4 flex flex-col gap-2 md:hidden">
-                    <Link to="/">
-                        <Button variant="outlined" className="px-4 py-1">
-                            Home
-                        </Button>
-                    </Link>
-                    <Link to="/Group-Chat">
-                        <Button variant="outlined" className="px-4 py-1">
-                            Join Group Chat
-                        </Button>
-                    </Link>
-                    <Link to="/Single-chat">
-                        <Button variant="outlined" className="px-4 py-1">
-                            Start Chating with your friends
-                        </Button>
-                    </Link>
-                    {user ? (
-                        <div className="w-full flex justify-between items-center">
-                            <span className="text-lg font-medium">Hi, {user}</span>
-                            <button
-                                onClick={handleLogout}
-                                className="px-4 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600"
-                            >
-                                Logout
-                            </button>
-                        </div>
-                    ) : (
-                        <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                            <Button variant="outlined" className="w-full px-4 py-1">
-                                Login
-                            </Button>
-                        </Link>
-                    )}
-                </div>
-            )}
         </nav>
     );
 };
