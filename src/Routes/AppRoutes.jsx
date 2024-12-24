@@ -7,6 +7,7 @@ import PrivateRoute from "./PrivateRoute";
 import { useState } from "react";
 import Profile from "../Components/Profile";
 import SignUp from "../Pages/SignUp";
+import { RedirectToSignIn } from "@clerk/clerk-react";
 
 const AppRoutes = () => {
     const [user, setUser] = useState(null); // user will determine the login status
@@ -41,6 +42,10 @@ const AppRoutes = () => {
             />
             <Route path="/login" element={<LoginPage setUser={setUser} />} />
             <Route path="/signUp" element={<SignUp />} />
+            <Route
+                path="*"
+                element={<RedirectToSignIn />}
+            />
         </Routes>
     );
 };
