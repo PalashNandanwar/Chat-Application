@@ -1,249 +1,119 @@
 {
-    "groups": [
-        {
-            "id": 1,
-            "name": "AI Developers",
-            "unreadMessages": 3,
-            "messages": [
-                {
-                    "sender": "John",
-                    "text": "Hey team! Any updates on the project?",
-                    "time": "10:15 AM"
-                },
-                {
-                    "sender": "me",
-                    "text": "Yes, I’ll share the report by EOD.",
-                    "time": "10:20 AM"
-                },
-                {
-                    "sender": "Alice",
-                    "text": "Let’s finalize the designs by tomorrow.",
-                    "time": "10:25 AM"
-                }
-            ]
-        },
-        {
-            "id": 2,
-            "name": "Tech Geeks",
-            "unreadMessages": 2,
-            "messages": [
-                {
-                    "sender": "me",
-                    "text": "Did you check the new AI library?",
-                    "time": "9:30 AM"
-                },
-                {
-                    "sender": "Michael",
-                    "text": "Yeah, looks promising!",
-                    "time": "9:35 AM"
-                }
-            ]
-        },
-        {
-            "id": 3,
-            "name": "Project Phoenix",
-            "unreadMessages": 5,
-            "messages": [
-                {
-                    "sender": "Sophia",
-                    "text": "Meeting at 2 PM today?",
-                    "time": "8:00 AM"
-                },
-                {
-                    "sender": "me",
-                    "text": "Yes, I’ll send the invite.",
-                    "time": "8:10 AM"
-                },
-                {
-                    "sender": "Sophia",
-                    "text": "Thanks!",
-                    "time": "8:15 AM"
-                },
-                {
-                    "sender": "David",
-                    "text": "Make sure to add the final slides.",
-                    "time": "8:20 AM"
-                },
-                {
-                    "sender": "me",
-                    "text": "Got it!",
-                    "time": "8:25 AM"
-                }
-            ]
-        },
-        {
-            "id": 4,
-            "name": "College Buddies",
-            "unreadMessages": 1,
-            "messages": [
-                {
-                    "sender": "Emily",
-                    "text": "Let’s meet this weekend!",
-                    "time": "6:45 PM"
-                }
-            ]
-        },
-        {
-            "id": 5,
-            "name": "Family Group",
-            "unreadMessages": 0,
-            "messages": [
-                {
-                    "sender": "Mom",
-                    "text": "Dinner is at 7 PM.",
-                    "time": "5:30 PM"
-                },
-                {
-                    "sender": "me",
-                    "text": "Okay!",
-                    "time": "5:35 PM"
-                }
-            ]
-        },
-        {
-            "id": 6,
-            "name": "Design Team",
-            "unreadMessages": 7,
-            "messages": [
-                {
-                    "sender": "Rachel",
-                    "text": "We need to fix the colors on the homepage.",
-                    "time": "3:30 PM"
-                },
-                {
-                    "sender": "me",
-                    "text": "I’ll make the changes and send updates.",
-                    "time": "3:40 PM"
-                },
-                {
-                    "sender": "Rachel",
-                    "text": "Perfect! Thanks!",
-                    "time": "3:45 PM"
-                },
-                {
-                    "sender": "Leo",
-                    "text": "New wireframes ready for review.",
-                    "time": "4:00 PM"
-                },
-                {
-                    "sender": "me",
-                    "text": "I’ll check and share feedback.",
-                    "time": "4:10 PM"
-                },
-                {
-                    "sender": "Rachel",
-                    "text": "Cool!",
-                    "time": "4:20 PM"
-                },
-                {
-                    "sender": "Leo",
-                    "text": "Also, update the footer links.",
-                    "time": "4:25 PM"
-                }
-            ]
-        },
-        {
-            "id": 7,
-            "name": "Gaming Squad",
-            "unreadMessages": 4,
-            "messages": [
-                {
-                    "sender": "Mike",
-                    "text": "Who’s up for a game tonight?",
-                    "time": "7:00 PM"
-                },
-                {
-                    "sender": "me",
-                    "text": "Count me in!",
-                    "time": "7:10 PM"
-                },
-                {
-                    "sender": "Sarah",
-                    "text": "Same here!",
-                    "time": "7:15 PM"
-                },
-                {
-                    "sender": "Mike",
-                    "text": "Awesome! Let’s play at 8 PM.",
-                    "time": "7:20 PM"
-                }
-            ]
-        },
-        {
-            "id": 8,
-            "name": "Team Alpha",
-            "unreadMessages": 3,
-            "messages": [
-                {
-                    "sender": "Anna",
-                    "text": "Sprint review scheduled for tomorrow.",
-                    "time": "11:00 AM"
-                },
-                {
-                    "sender": "me",
-                    "text": "I’ll prepare the report.",
-                    "time": "11:10 AM"
-                },
-                {
-                    "sender": "Anna",
-                    "text": "Thanks!",
-                    "time": "11:15 AM"
-                }
-            ]
-        },
-        {
-            "id": 9,
-            "name": "Fitness Enthusiasts",
-            "unreadMessages": 6,
-            "messages": [
-                {
-                    "sender": "Chris",
-                    "text": "New workout plans uploaded.",
-                    "time": "6:30 AM"
-                },
-                {
-                    "sender": "me",
-                    "text": "I’ll check them out!",
-                    "time": "6:40 AM"
-                },
-                {
-                    "sender": "Mia",
-                    "text": "Let’s plan a weekend hike!",
-                    "time": "6:50 AM"
-                },
-                {
-                    "sender": "Chris",
-                    "text": "Great idea!",
-                    "time": "6:55 AM"
-                },
-                {
-                    "sender": "me",
-                    "text": "I’m in!",
-                    "time": "7:00 AM"
-                },
-                {
-                    "sender": "Mia",
-                    "text": "Let’s finalize timings.",
-                    "time": "7:05 AM"
-                }
-            ]
-        },
-        {
-            "id": 10,
-            "name": "Book Club",
-            "unreadMessages": 2,
-            "messages": [
-                {
-                    "sender": "Olivia",
-                    "text": "Next book is 'The Alchemist'.",
-                    "time": "1:00 PM"
-                },
-                {
-                    "sender": "me",
-                    "text": "I’ve read it before. Loved it!",
-                    "time": "1:10 PM"
-                }
-            ]
-        }
-    ]
+  "groups": [
+    {
+      "id": 1,
+      "name": "AI Developers",
+      "unreadMessages": 3,
+      "messages": [
+        { "sender": "John", "text": "Hey team! Any updates on the project?", "time": "10:15 AM" },
+        { "sender": "me", "text": "Yes, I’ll share the report by EOD.", "time": "10:20 AM" },
+        { "sender": "Alice", "text": "Let’s finalize the designs by tomorrow.", "time": "10:25 AM" }
+      ],
+      "members": ["John", "Aish", "Alice"]
+    },
+    {
+      "id": 2,
+      "name": "Tech Geeks",
+      "unreadMessages": 2,
+      "messages": [
+        { "sender": "me", "text": "Did you check the new AI library?", "time": "9:30 AM" },
+        { "sender": "Michael", "text": "Yeah, looks promising!", "time": "9:35 AM" }
+      ],
+      "members": ["Aish", "Michael"]
+    },
+    {
+      "id": 3,
+      "name": "Project Phoenix",
+      "unreadMessages": 5,
+      "messages": [
+        { "sender": "Sophia", "text": "Meeting at 2 PM today?", "time": "8:00 AM" },
+        { "sender": "me", "text": "Yes, I’ll send the invite.", "time": "8:10 AM" },
+        { "sender": "Sophia", "text": "Thanks!", "time": "8:15 AM" },
+        { "sender": "David", "text": "Make sure to add the final slides.", "time": "8:20 AM" },
+        { "sender": "me", "text": "Got it!", "time": "8:25 AM" }
+      ],
+      "members": ["Sophia", "Aish", "David"]
+    },
+    {
+      "id": 4,
+      "name": "College Buddies",
+      "unreadMessages": 1,
+      "messages": [
+        { "sender": "Emily", "text": "Let’s meet this weekend!", "time": "6:45 PM" }
+      ],
+      "members": ["Emily"]
+    },
+    {
+      "id": 5,
+      "name": "Family Group",
+      "unreadMessages": 0,
+      "messages": [
+        { "sender": "Mom", "text": "Dinner is at 7 PM.", "time": "5:30 PM" },
+        { "sender": "me", "text": "Okay!", "time": "5:35 PM" }
+      ],
+      "members": ["Mom", "Aish"]
+    },
+    {
+      "id": 6,
+      "name": "Design Team",
+      "unreadMessages": 7,
+      "messages": [
+        { "sender": "Rachel", "text": "We need to fix the colors on the homepage.", "time": "3:30 PM" },
+        { "sender": "me", "text": "I’ll make the changes and send updates.", "time": "3:40 PM" },
+        { "sender": "Rachel", "text": "Perfect! Thanks!", "time": "3:45 PM" },
+        { "sender": "Leo", "text": "New wireframe ready for review.", "time": "4:00 PM" },
+        { "sender": "me", "text": "I’ll check and share feedback.", "time": "4:10 PM" },
+        { "sender": "Rachel", "text": "Cool!", "time": "4:20 PM" },
+        { "sender": "Leo", "text": "Also, update the footer links.", "time": "4:25 PM" }
+      ],
+      "members": ["Rachel", "Aish", "Leo"]
+    },
+    {
+      "id": 7,
+      "name": "Gaming Squad",
+      "unreadMessages": 4,
+      "messages": [
+        { "sender": "Mike", "text": "Who’s up for a game tonight?", "time": "7:00 PM" },
+        { "sender": "me", "text": "Count me in!", "time": "7:10 PM" },
+        { "sender": "Sarah", "text": "Same here!", "time": "7:15 PM" },
+        { "sender": "Mike", "text": "Awesome! Let’s play at 8 PM.", "time": "7:20 PM" }
+      ],
+      "members": ["Mike", "Aish", "Sarah"]
+    },
+    {
+      "id": 8,
+      "name": "Team Alpha",
+      "unreadMessages": 3,
+      "messages": [
+        { "sender": "Anna", "text": "Sprint review scheduled for tomorrow.", "time": "11:00 AM" },
+        { "sender": "me", "text": "I’ll prepare the report.", "time": "11:10 AM" },
+        { "sender": "Anna", "text": "Thanks!", "time": "11:15 AM" }
+      ],
+      "members": ["Anna", "Aish"]
+    },
+    {
+      "id": 9,
+      "name": "Fitness Enthusiasts",
+      "unreadMessages": 6,
+      "messages": [
+        { "sender": "Chris", "text": "New workout plans uploaded.", "time": "6:30 AM" },
+        { "sender": "me", "text": "I’ll check them out!", "time": "6:40 AM" },
+        { "sender": "Mia", "text": "Let’s plan a weekend hike!", "time": "6:50 AM" },
+        { "sender": "Chris", "text": "Great idea!", "time": "6:55 AM" },
+        { "sender": "me", "text": "I’m in!", "time": "7:00 AM" },
+        { "sender": "Mia", "text": "Let’s finalize timings.", "time": "7:05 AM" }
+      ],
+      "members": ["Chris", "Aish", "Mia"]
+    },
+    {
+      "id": 10,
+      "name": "Book Club",
+      "unreadMessages": 2,
+      "messages": [
+        { "sender": "Olivia", "text": "Next book is 'The Alchemist'.", "time": "1:00 PM" },
+        { "sender": "me", "text": "I’ve read it before. Loved it!", "time": "1:10 PM" }
+      ],
+      "members": ["Olivia", "Aish"]
+    }
+  ]
 }
