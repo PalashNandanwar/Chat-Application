@@ -1,8 +1,25 @@
-# React + Vite
+# Chat Application  
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A real-time chat application built with modern web technologies. This application enables users to communicate in real-time with a seamless and user-friendly interface.  
 
-Currently, two official plugins are available:
+## Features  
+- **Real-Time Messaging**: Send and receive messages instantly.  
+- **User Authentication**: Secure login and signup functionality.  
+- **Responsive Design**: Optimized for both desktop and mobile devices.  
+- **Scalable Architecture**: Built to support multiple users and dynamic conversations.  
+- **User-Friendly Interface**: Clean and intuitive design.  
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech Stack  
+- **Frontend**: React, HTML, CSS, JavaScript  
+- **Backend**: Node.js, Express.js  
+- **Database**: MongoDB  
+- **Real-Time Communication**: Socket.IO  
+
+## Installation  
+
+Follow these steps to set up the application locally:  
+
+1. **Clone the Repository**:  
+   ```bash  
+   git clone https://github.com/PalashNandanwar/Chat-Application.git  
+   cd Chat-Application  
