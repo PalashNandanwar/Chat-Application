@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable react/prop-types */
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
@@ -7,8 +8,11 @@ import privatechat from "../assets/private-chat.png";
 import groupchat from "../assets/gropu-chat.png";
 import chathistory from "../assets/chat-history.png";
 
+
+
 const HomePage = ({ user, setUser }) => {
-    // Check if the user is logged in (user is not null)
+    // const { sessionId, getToken } = useAuth();
+
     const isSignedIn = user !== null;
 
     useEffect(() => {
@@ -22,7 +26,6 @@ const HomePage = ({ user, setUser }) => {
         <div className="dark:bg-[#3b3a3a]">
             {/* Navigation Bar */}
             <NavBar user={user} setUser={setUser} />
-
             {/* Welcome Section */}
             <div className="bg-blue-100 text-center w-full h-auto py-10">
                 <h1 className="text-4xl font-bold text-gray-800">Welcome to Chatting App</h1>

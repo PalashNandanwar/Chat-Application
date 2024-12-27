@@ -134,7 +134,7 @@ const GroupChat = ({ user, setUser }) => {
                                     </div>
                                 </div>
                                 {group.unreadMessages > 0 && (
-                                    <div className="bg-blue-500 text-white text-sm font-semibold px-2 py-1 rounded-full">
+                                    <div className="bg-blue-500 w-[27px] h-[27px] flex justify-center items-center rounded-full text-white text-sm font-semibold">
                                         {group.unreadMessages}
                                     </div>
                                 )}
@@ -300,3 +300,5 @@ GroupChat.propTypes = {
 };
 
 export default GroupChat;
+
+
