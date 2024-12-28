@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import NavBar from "../NavBar";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./SingleChat.css";
@@ -31,13 +31,17 @@ const SingleChat = ({ user, setUser, theme }) => {
     const [activeChat, setActiveChat] = useState(null);
     const [isTyping, setIsTyping] = useState(false);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [showProfileDialog, setShowProfileDialog] = useState(false);
 
-    // Function to get initials from a name
     const getInitials = (name) => {
         return name
             .split(" ")
             .map((n) => n[0])
             .join("");
+    };
+
+    const toggleProfileDialog = () => {
+        setShowProfileDialog(!showProfileDialog);
     };
 
     const sendMessage = () => {
@@ -60,25 +64,16 @@ const SingleChat = ({ user, setUser, theme }) => {
     };
 
     useEffect(() => {
-        if (input.length > 0) {
-            setIsTyping(true);
-        } else {
-            setIsTyping(false);
-        }
+        setIsTyping(input.length > 0);
     }, [input]);
 
     return (
         <div className={`single-chat-container ${theme}`}>
             <NavBar user={user} setUser={setUser} />
             <div className="chat-wrapper">
-                {/* Sidebar for Contacts */}
                 <div className="contacts-sidebar">
                     <div className="search-bar">
-                        <input
-                            type="text"
-                            placeholder="Search for chat"
-                            className="find-user-input"
-                        />
+                        <input type="text" placeholder="Search for chat" className="find-user-input" />
                         <span className="search-icon">🔍</span>
                     </div>
                     <ul>
@@ -92,8 +87,9 @@ const SingleChat = ({ user, setUser, theme }) => {
                                     src={contact.profileImage || `https://via.placeholder.com/40?text=${getInitials(contact.name)}`}
                                     alt={`${contact.name}'s profile`}
                                     className="contact-avatar"
+                                    onClick={toggleProfileDialog}
                                 />
-                                <div className="contact-info">
+                                <div className="contact-info" onClick={toggleProfileDialog}>
                                     <span className="contact-name">{contact.name}</span>
                                     <span className="last-message">{contact.lastMessage}</span>
                                 </div>
@@ -101,8 +97,6 @@ const SingleChat = ({ user, setUser, theme }) => {
                         ))}
                     </ul>
                 </div>
-
-                {/* Chat Box */}
                 <div className="chat-box-wrapper">
                     {activeChat && (
                         <div className="chat-header">
@@ -111,9 +105,10 @@ const SingleChat = ({ user, setUser, theme }) => {
                                     className="header-profile-image"
                                     src={activeChat.profileImage}
                                     alt={`${activeChat.name}'s profile`}
+                                    onClick={toggleProfileDialog}
                                 />
                                 <div className="name-status-wrapper">
-                                    <h4>{activeChat.name}</h4>
+                                    <h4 onClick={toggleProfileDialog}>{activeChat.name}</h4>
                                     <div className="status">
                                         <span
                                             className={`status-dot ${activeChat.status === "online" ? "online" : "offline"
@@ -123,8 +118,6 @@ const SingleChat = ({ user, setUser, theme }) => {
                                     </div>
                                 </div>
                             </div>
-
-                            {/* Action Buttons */}
                             <div className="chat-header-actions">
                                 <button className="icon-button">
                                     <i className="fas fa-phone"></i>
@@ -189,6 +182,30 @@ const SingleChat = ({ user, setUser, theme }) => {
                         <button onClick={sendMessage}>Send</button>
                     </div>
                 </div>
+                {showProfileDialog && (
+                    <div className="profile-dialog">
+                        <div className="dialog-content">
+                            <img
+                                className="dialog-profile-image"
+                                src={activeChat?.profileImage}
+                                alt={`${activeChat?.name}'s profile`}
+                            />
+                            <i className="fas fa-pencil-alt edit-icon"></i>
+                            <h3>{activeChat?.name}</h3>
+                            <div className="dialog-buttons">
+                                <button className="dialog-button">📹 Video Call</button>
+                                <button className="dialog-button">📞 Audio Call</button>
+                            </div>
+                            <p className="status-description">{activeChat?.status === "online" ? "Available" : "Busy, do not call"}</p>
+                            <button className="dialog-button">Add to Favourites</button>
+                            <div className="report-block">
+                                <button className="dialog-button danger">Report</button>
+                                <button className="dialog-button danger">Block</button>
+                            </div>
+                            <button className="close-dialog" onClick={toggleProfileDialog}> ✖ </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

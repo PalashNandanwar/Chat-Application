@@ -1,16 +1,16 @@
 /* eslint-disable no-unused-vars */
 
-import { SignOutButton, UserProfile, useUser } from "@clerk/clerk-react";
+import { SignOutButton, useUser } from "@clerk/clerk-react";
 import { useAuth } from "@clerk/clerk-react";
 import { Link } from "react-router-dom";
 import { IoChevronBackSharp } from "react-icons/io5";
 import { useEffect, useState } from "react";
-import img1 from "../assets/avatar1.png"
-import img2 from "../assets/avatar2.png"
-import img3 from "../assets/avatar3.png"
-import img4 from "../assets/avatar4.png"
-import img5 from "../assets/avatar5.png"
-import img6 from "../assets/avatar6.png"
+import img1 from "../assets/avatar1.png";
+import img2 from "../assets/avatar2.png";
+import img3 from "../assets/avatar3.png";
+import img4 from "../assets/avatar4.png";
+import img5 from "../assets/avatar5.png";
+import img6 from "../assets/avatar6.png";
 
 // Predefined avatar options
 const avatarOptions = [img1, img2, img3, img4, img5, img6];
@@ -21,35 +21,47 @@ const Profile = () => {
     const { sessionId } = useAuth();
     const [selectedAvatar, setSelectedAvatar] = useState("");
     const [showAvatarOptions, setShowAvatarOptions] = useState(false);
-    console.log(clerkUser);
+    const [userDetails, setUserDetails] = useState(null);
+
+    // Load avatar from localStorage when component mounts
+    useEffect(() => {
+        const savedAvatar = localStorage.getItem("selectedAvatar");
+        if (savedAvatar) {
+            setSelectedAvatar(savedAvatar);
+        }
+    }, []);
 
     useEffect(() => {
         setActiveUser(!!sessionId);
     }, [sessionId]);
 
-    useEffect(() => {
-        console.log("Active User:", activeUser);
-    }, [activeUser]);
-
-    // Log user details when user is logged in or signs in
+    // Log user details and update userDetails object
     useEffect(() => {
         if (clerkUser) {
-            const userDetails = {
-                username: clerkUser.username,
-                firstName: clerkUser.firstName,
-                lastName: clerkUser.lastName,
-                email: clerkUser.emailAddresses[0]?.emailAddress,
-                profileImage: clerkUser.imageUrl,
-                activeStatus: clerkUser.id ? true : false,
-            };
-            console.log("User Details: ", userDetails);
-        }
-    }, [clerkUser]); // This will run whenever clerkUser changes
+            const userImage = clerkUser.hasImage
+                ? clerkUser.imageUrl
+                : selectedAvatar || avatarOptions[0]; // Default to the first avatar if none selected
 
+            const details = {
+                username: clerkUser.username || "Guest",
+                firstName: clerkUser.firstName || "User",
+                lastName: clerkUser.lastName || "",
+                email: clerkUser.emailAddresses[0]?.emailAddress || "Not provided",
+                profileImage: userImage,
+                activeStatus: !!clerkUser.id,
+            };
+
+            setUserDetails(details);
+            console.log("User Details:", details);
+        }
+    }, [clerkUser, selectedAvatar]);
+
+    // Save selected avatar to localStorage
     const handleAvatarSelection = (avatarUrl) => {
         setSelectedAvatar(avatarUrl);
+        localStorage.setItem("selectedAvatar", avatarUrl);
         console.log(`Avatar selected: ${avatarUrl}`);
-        // Add logic here to save the avatar to Clerk or your backend
+        setShowAvatarOptions(false); // Close modal after selection
     };
 
     const toggleAvatarOptions = () => {
@@ -60,7 +72,7 @@ const Profile = () => {
         return <p>Loading...</p>; // Handle the case when the user data is not loaded yet
     }
 
-    const userImage = clerkUser.hasImage ? clerkUser.imageUrl : selectedAvatar;
+    const userImage = userDetails?.profileImage || clerkUser.imageUrl;
 
     return (
         <div className="flex mt-[2rem] justify-center items-center flex-col">
@@ -72,42 +84,41 @@ const Profile = () => {
                     className="w-24 h-24 rounded-full mb-4 shadow-lg"
                 />
                 <h1 className="text-2xl font-semibold">
-                    Welcome, {clerkUser.firstName || "User"}!
+                    Welcome, {userDetails?.firstName || "User"}!
                 </h1>
             </div>
 
-            {/* Show button if user has no profile image */}
-            {!clerkUser.hasImage && !selectedAvatar && (
-                <div className="mt-4">
-                    <button
-                        onClick={toggleAvatarOptions}
-                        className="text-white bg-blue-500 px-4 py-1 rounded hover:bg-blue-600"
-                    >
-                        Select Avatar
-                    </button>
+            {/* Button to change avatar */}
+            <div className="mt-4">
+                <button
+                    onClick={toggleAvatarOptions}
+                    className="text-white bg-blue-500 px-4 py-1 rounded hover:bg-blue-600"
+                >
+                    {selectedAvatar ? "Change Avatar" : "Select Avatar"}
+                </button>
 
-                    {/* Show avatar options if button is clicked */}
-                    {showAvatarOptions && (
-                        <div className="mt-2 flex gap-4">
-                            {avatarOptions.map((avatar, index) => (
-                                <img
-                                    key={index}
-                                    src={avatar}
-                                    alt={`Avatar ${index + 1}`}
-                                    className="w-16 h-16 rounded-full cursor-pointer border-2 border-transparent hover:border-blue-500"
-                                    onClick={() => handleAvatarSelection(avatar)}
-                                />
-                            ))}
-                        </div>
-                    )}
-                </div>
-            )}
+                {/* Show avatar options if button is clicked */}
+                {showAvatarOptions && (
+                    <div className="mt-2 flex gap-4 flex-wrap">
+                        {avatarOptions.map((avatar, index) => (
+                            <img
+                                key={index}
+                                src={avatar}
+                                alt={`Avatar ${index + 1}`}
+                                className={`w-16 h-16 rounded-full cursor-pointer border-2 ${selectedAvatar === avatar ? "border-blue-500" : "border-transparent"
+                                    } hover:border-blue-500`}
+                                onClick={() => handleAvatarSelection(avatar)}
+                            />
+                        ))}
+                    </div>
+                )}
+            </div>
 
             {/* Display user profile details */}
             <div className="text-center mt-4">
-                <p className="text-lg">Name: {clerkUser.fullName}</p>
-                <p className="text-lg">User Name: {clerkUser.username}</p>
-                <p className="text-lg">Email: {clerkUser.emailAddresses[0].emailAddress}</p>
+                <p className="text-lg">Name: {userDetails?.firstName} {userDetails?.lastName}</p>
+                <p className="text-lg">User Name: {userDetails?.username}</p>
+                <p className="text-lg">Email: {userDetails?.email}</p>
             </div>
 
             {/* Back Button */}
