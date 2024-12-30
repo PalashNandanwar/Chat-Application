@@ -10,6 +10,6 @@ import java.util.List;
 public interface MessageR extends MongoRepository<Message, String> {
     List<Message> findByReceiverId(String receiverID);
     List<Message> findByGroupId(String groupId);
-    List<Message> findBySenderIdOrReceiverId(String senderId, String receiverId);
+    List<Message> findBySenderId(String senderId);
 
 }

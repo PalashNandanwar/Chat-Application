@@ -14,7 +14,7 @@ const LoginPage = ({ setUser }) => {
 
     return (
         <div className="flex items-center justify-center h-screen">
-            <SignIn path="/login" routing="path" signUpUrl="/signup" />
+            <SignIn />
         </div>
     );
 };

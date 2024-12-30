@@ -3,6 +3,7 @@ package com.example.chat.controller;
 import com.example.chat.model.Group;
 import com.example.chat.model.Message;
 import com.example.chat.model.User;
+import com.example.chat.repository.GroupR;
 import com.example.chat.repository.MessageR;
 import com.example.chat.repository.UserR;
 import com.example.chat.service.GroupS;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+
 @RestController
 @RequestMapping("/chat")
 public class ChatC {
@@ -31,6 +33,8 @@ public class ChatC {
 
     @Autowired
     private GroupS groupS;
+    @Autowired
+    private GroupR groupR;
     @Autowired
     private MessageR messageR;
     @Autowired
@@ -50,10 +54,19 @@ public class ChatC {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser); // Return 201 if successful
     }
+    @GetMapping("/one")
+    public List<User> getOneList(){
+        return userR.findAll();
+    }
 
-    @GetMapping("/chat/history/{userId}")
+    @GetMapping("/grp")
+    public List<Group> getGrpList(){
+        return groupR.findAll();
+    }
+
+    @GetMapping("/history/{userId}")
     public List<Message> getChatHistory(@PathVariable String userId) {
-        return messageR.findBySenderIdOrReceiverId(userId, userId);
+        return messageR.findBySenderId(userId);
     }
 
 

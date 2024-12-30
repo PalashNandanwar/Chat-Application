@@ -7,13 +7,7 @@ export default function Sign() {
                 <h1 className="text-2xl font-bold mb-4 text-center text-gray-800">
                     Create an Account
                 </h1>
-
-                <SignUp
-                    path="/signup"
-                    routing="path"
-                    signInUrl="/login"
-                    forceRedirectUrl="/" // Redirect after signup
-                />
+                <SignUp />
             </div>
         </div>
     );
