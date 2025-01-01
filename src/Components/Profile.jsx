@@ -1,89 +1,33 @@
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
+// /* eslint-disable react/prop-types */
+// /* eslint-disable no-unused-vars */
+// import { SignOutButton, useUser } from "@clerk/clerk-react";
+// import { Link } from "react-router-dom";
+// import { IoChevronBackSharp } from "react-icons/io5";
+// import { useEffect, useState } from "react";
+// import img1 from "../assets/avatar1.png";
+// import img2 from "../assets/avatar2.png";
+// import img3 from "../assets/avatar3.png";
+// import img4 from "../assets/avatar4.png";
+// import img5 from "../assets/avatar5.png";
+// import img6 from "../assets/avatar6.png";
 
-import { SignOutButton, useUser } from "@clerk/clerk-react";
-import { useAuth } from "@clerk/clerk-react";
-import { data, Link } from "react-router-dom";
-import { IoChevronBackSharp } from "react-icons/io5";
-import { useEffect, useState } from "react";
-import img1 from "../assets/avatar1.png";
-import img2 from "../assets/avatar2.png";
-import img3 from "../assets/avatar3.png";
-import img4 from "../assets/avatar4.png";
-import img5 from "../assets/avatar5.png";
-import img6 from "../assets/avatar6.png";
+// // Predefined avatar options
+// const avatarOptions = [img1, img2, img3, img4, img5, img6];
 
-// Predefined avatar options
-const avatarOptions = [img1, img2, img3, img4, img5, img6];
-
-// const Profile = () => {
+// const Profile = ({ onUserInfoUpdate }) => {
 //     const { user: clerkUser } = useUser();
-//     const { sessionId } = useAuth();
-//     const [activeUser, setActiveUser] = useState(false);
 //     const [selectedAvatar, setSelectedAvatar] = useState("");
-//     const [showAvatarOptions, setShowAvatarOptions] = useState(false);
-//     const [userDetails, setUserDetails] = useState(null);
-//     console.log(clerkUser);
+//     const [userDetails, setUserDetails] = useState([]);
+//     const [showAvatarOptions, setShowAvatarOptions] = useState(false); // Define state
+//     const [userId, setUserId] = useState();
+//     const [userImage, setUserImage] = useState();
 
-
-//     // Load avatar from localStorage when component mounts
-//     useEffect(() => {
-//         const savedAvatar = localStorage.getItem("selectedAvatar");
-//         if (savedAvatar) {
-//             setSelectedAvatar(savedAvatar);
-//         }
-//     }, []);
-
-//     useEffect(() => {
-//         setActiveUser(!!sessionId);
-//     }, [sessionId]);
-
-//     // Register user to backend upon login
-//     useEffect(() => {
-//         const registerUser = async () => {
-//             if (clerkUser) {
-//                 const user = {
-//                     username: clerkUser.username || "testuser",
-//                     password: "password123",
-//                     email: clerkUser.emailAddresses[0]?.emailAddress || "testuser@example.com",
-//                     isOnline: true,
-//                     // lastSeen: clerkUser.lastSignInAt
-//                     // lastSeen: clerkUser.lastSignInAt
-//                 };
-
-//                 try {
-//                     const response = await fetch("http://localhost:8081/chat/register", {
-//                         method: "POST",
-//                         headers: {
-//                             "Content-Type": "application/json",
-//                         },
-//                         body: JSON.stringify(user),
-//                     });
-
-//                     if (response.ok) {
-//                         const data = await response.json();
-//                         console.log("User registered successfully:", data);
-//                     } else if (response.status === 400) {
-//                         console.error("Bad Request: Missing required fields");
-//                     } else if (response.status === 500) {
-//                         console.error("Internal Server Error: Registration failed");
-//                     }
-//                 } catch (error) {
-//                     console.error("Error:", error);
-//                 }
-//             }
-//         };
-
-//         registerUser();
-//     }, [clerkUser]);
-
-//     // Log user details and update userDetails object
 //     useEffect(() => {
 //         if (clerkUser) {
-//             const userImage = clerkUser.hasImage
+//             const userImages = clerkUser.hasImage
 //                 ? clerkUser.imageUrl
 //                 : selectedAvatar || avatarOptions[0];
-
+//             setUserImage(userImages)
 //             const details = {
 //                 username: clerkUser.username || "Guest",
 //                 firstName: clerkUser.firstName || "User",
@@ -95,26 +39,109 @@ const avatarOptions = [img1, img2, img3, img4, img5, img6];
 
 //             setUserDetails(details);
 //             console.log("User Details:", details);
+//             onUserInfoUpdate(details.username, userImages);
 //         }
-//     }, [clerkUser, selectedAvatar, avatarOptions]);
+//     }, [clerkUser, selectedAvatar]);
 
-//     // Save selected avatar to localStorage
-//     const handleAvatarSelection = (avatarUrl) => {
-//         setSelectedAvatar(avatarUrl);
-//         localStorage.setItem("selectedAvatar", avatarUrl);
-//         console.log(`Avatar selected: ${avatarUrl}`);
-//         setShowAvatarOptions(false); // Close modal after selection
-//     };
+//     // Load avatar from localStorage
+//     useEffect(() => {
+//         const savedAvatar = localStorage.getItem("selectedAvatar");
+//         if (savedAvatar) {
+//             setSelectedAvatar(savedAvatar);
+//         }
+//     }, []);
 
 //     const toggleAvatarOptions = () => {
 //         setShowAvatarOptions((prevState) => !prevState);
 //     };
 
-//     if (!clerkUser) {
-//         return <p>Loading...</p>; // Handle the case when the user data is not loaded yet
+//     // Sync user details with backend
+//     useEffect(() => {
+//         if (clerkUser) {
+//             const storeUserData = async () => {
+//                 try {
+//                     const userData = {
+//                         name: clerkUser.username || "Guest",
+//                         email: clerkUser.emailAddresses[0]?.emailAddress,
+//                         password: "12345678",
+//                         isActive: !!clerkUser.id, // Simplified check
+//                         lastSeen: new Date()
+//                     };
+
+//                     const response = await fetch("http://localhost:5000/chat/users", {
+//                         method: "POST",
+//                         headers: {
+//                             "Content-Type": "application/json",
+//                         },
+//                         body: JSON.stringify(userData),
+//                     });
+
+//                     if (!response.ok && response.status !== 400) {
+//                         throw new Error("Failed to save user data");
+//                     }
+
+//                     const data = await response.json();
+//                     console.log(data);
+
+//                     // setStoredData("Stored Data" + data?.[1]);
+
+//                     console.log("User data saved:", data);
+//                     setUserId(data.user._id)
+//                 } catch (error) {
+//                     console.error("Error saving user data:", error.message);
+//                 }
+//             };
+
+//             storeUserData();
+//             // console.log("Stored DAta :- " + storedData);
+
+//         }
+//     }, [clerkUser]);
+
+//     const handleAvatarSelection = (avatarUrl) => {
+//         setSelectedAvatar(avatarUrl);
+//         localStorage.setItem("selectedAvatar", avatarUrl);
+//     };
+
+//     if (!clerkUser || !userDetails) {
+//         return <p>Loading...</p>;
 //     }
 
-//     const userImage = userDetails?.profileImage || clerkUser.imageUrl;
+//     const handleLogout = async () => {
+//         if (!userId) {
+//             console.error("User ID is missing.");
+//             return;
+//         }
+
+//         const lastSeen = new Date(); // Get the current timestamp
+
+//         try {
+//             const response = await fetch(
+//                 `http://localhost:5000/chat/users/${userId}/status`,
+//                 {
+//                     method: "PUT",
+//                     headers: {
+//                         "Content-Type": "application/json",
+//                     },
+//                     body: JSON.stringify({
+//                         isActive: false,
+//                         lastSeen: lastSeen, // Update the lastSeen field
+//                     }),
+//                 }
+//             );
+
+//             if (!response.ok) {
+//                 throw new Error("Failed to update user status on logout");
+//             }
+
+//             console.log("User status updated to inactive and lastSeen updated:", lastSeen);
+
+//             // You can perform any additional logout actions here, e.g., signing out from Clerk
+//         } catch (error) {
+//             console.error("Error during logout:", error.message);
+//         }
+//     };
+
 
 //     return (
 //         <div className="flex mt-[2rem] justify-center items-center flex-col">
@@ -155,10 +182,13 @@ const avatarOptions = [img1, img2, img3, img4, img5, img6];
 
 //             <div className="text-center mt-4">
 //                 <p className="text-lg">
-//                     Name: {userDetails?.firstName} {userDetails?.lastName}
+//                     Name: {userDetails.firstName} {userDetails.lastName}
 //                 </p>
-//                 <p className="text-lg">User Name: {userDetails?.username}</p>
-//                 <p className="text-lg">Email: {userDetails?.email}</p>
+//                 <p className="text-lg">User Name: {userDetails.username}</p>
+//                 <p className="text-lg">Email: {userDetails.email}</p>
+//                 <p className="text-lg">
+//                     Status: Online
+//                 </p>
 //             </div>
 
 //             <div className="absolute left-0 top-0 m-[2rem]">
@@ -173,7 +203,9 @@ const avatarOptions = [img1, img2, img3, img4, img5, img6];
 
 //             <div className="mt-[2rem]">
 //                 <SignOutButton>
-//                     <button className="text-white bg-red-500 px-4 py-1 rounded hover:bg-red-600">
+//                     <button
+//                         onClick={handleLogout}
+//                         className="text-white bg-red-500 px-4 py-1 rounded hover:bg-red-600">
 //                         Logout
 //                     </button>
 //                 </SignOutButton>
@@ -185,67 +217,36 @@ const avatarOptions = [img1, img2, img3, img4, img5, img6];
 // export default Profile;
 
 
-const Profile = () => {
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
+import { SignOutButton, useUser } from "@clerk/clerk-react";
+import { Link } from "react-router-dom";
+import { IoChevronBackSharp } from "react-icons/io5";
+import { useEffect, useState } from "react";
+import img1 from "../assets/avatar1.png";
+import img2 from "../assets/avatar2.png";
+import img3 from "../assets/avatar3.png";
+import img4 from "../assets/avatar4.png";
+import img5 from "../assets/avatar5.png";
+import img6 from "../assets/avatar6.png";
+
+// Predefined avatar options
+const avatarOptions = [img1, img2, img3, img4, img5, img6];
+
+const Profile = ({ onUserInfoUpdate }) => {
     const { user: clerkUser } = useUser();
-    const { sessionId } = useAuth();
-    const [activeUser, setActiveUser] = useState(false);
-    const [isOnline, setIsOnline] = useState(true); // Track online/offline status
     const [selectedAvatar, setSelectedAvatar] = useState("");
-    const [showAvatarOptions, setShowAvatarOptions] = useState(false);
-    const [userDetails, setUserDetails] = useState(null);
-    console.log(isOnline);
+    const [userDetails, setUserDetails] = useState([]);
+    const [showAvatarOptions, setShowAvatarOptions] = useState(false); // Define state
+    const [userId, setUserId] = useState();
+    const [userImage, setUserImage] = useState();
 
-
-    // Load avatar from localStorage when component mounts
-    useEffect(() => {
-        const savedAvatar = localStorage.getItem("selectedAvatar");
-        if (savedAvatar) {
-            setSelectedAvatar(savedAvatar);
-        }
-    }, []);
-
-    useEffect(() => {
-        setActiveUser(!!sessionId);
-    }, [sessionId]);
-
-    // Trigger API for status toggle
-    const toggleStatus = async () => {
-        setIsOnline((prevStatus) => !prevStatus);
-
-        const statusPayload = {
-            username: clerkUser.username,
-            email: clerkUser.emailAddresses[0]?.emailAddress,
-            password: "12345678",
-            isOnline: !isOnline
-        };
-
-        try {
-            const response = await fetch("http://localhost:8081/chat/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(statusPayload),
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                console.log("User registered successfully:", data);
-            } else {
-                console.error("Failed to update status");
-            }
-        } catch (error) {
-            console.error("Error:", error);
-        }
-    };
-
-    // Log user details and update userDetails object
     useEffect(() => {
         if (clerkUser) {
-            const userImage = clerkUser.hasImage
+            const userImages = clerkUser.hasImage
                 ? clerkUser.imageUrl
                 : selectedAvatar || avatarOptions[0];
-
+            setUserImage(userImages)
             const details = {
                 username: clerkUser.username || "Guest",
                 firstName: clerkUser.firstName || "User",
@@ -256,25 +257,145 @@ const Profile = () => {
             };
 
             setUserDetails(details);
-            // console.log("User Details:", details);
+            console.log("User Details:", details);
+            onUserInfoUpdate(details.username, userImages);
         }
-    }, [clerkUser, selectedAvatar, avatarOptions]);
+    }, [clerkUser, selectedAvatar]);
 
-    const handleAvatarSelection = (avatarUrl) => {
-        setSelectedAvatar(avatarUrl);
-        localStorage.setItem("selectedAvatar", avatarUrl);
-        setShowAvatarOptions(false);
-    };
+    // Load avatar from localStorage
+    useEffect(() => {
+        const savedAvatar = localStorage.getItem("selectedAvatar");
+        if (savedAvatar) {
+            setSelectedAvatar(savedAvatar);
+        }
+    }, []);
 
     const toggleAvatarOptions = () => {
         setShowAvatarOptions((prevState) => !prevState);
     };
 
-    if (!clerkUser) {
+    // Sync user details with backend
+    useEffect(() => {
+        if (clerkUser) {
+            const storeUserData = async () => {
+                try {
+                    const userData = {
+                        name: clerkUser.username || "Guest",
+                        email: clerkUser.emailAddresses[0]?.emailAddress,
+                        password: "12345678",
+                        isActive: !!clerkUser.id, // Simplified check
+                        lastSeen: new Date()
+                    };
+
+                    const response = await fetch("http://localhost:5000/chat/users", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(userData),
+                    });
+
+                    if (!response.ok && response.status !== 400) {
+                        throw new Error("Failed to save user data");
+                    }
+
+                    const data = await response.json();
+                    console.log(data);
+
+                    // setStoredData("Stored Data" + data?.[1]);
+
+                    console.log("User data saved:", data);
+                    setUserId(data.user._id)
+                } catch (error) {
+                    console.error("Error saving user data:", error.message);
+                }
+            };
+
+            storeUserData();
+            // console.log("Stored DAta :- " + storedData);
+
+        }
+    }, [clerkUser]);
+
+    const handleAvatarSelection = (avatarUrl) => {
+        setSelectedAvatar(avatarUrl);
+        localStorage.setItem("selectedAvatar", avatarUrl);
+    };
+
+    const handleRegister = async () => {
+        if (!clerkUser) {
+            console.error("User is not logged in.");
+            return;
+        }
+
+        try {
+            const registrationData = {
+                name: clerkUser.username || "Guest",
+                email: clerkUser.emailAddresses[0]?.emailAddress,
+                profileImage: userImage,
+                isActive: true, // User is active when registered
+                lastSeen: new Date()
+            };
+
+            const response = await fetch("http://localhost:5000/chat/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(registrationData),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to register user");
+            }
+
+            const data = await response.json();
+            console.log("User registered successfully:", data);
+            setUserId(data.user._id); // Update the user ID after registration
+
+        } catch (error) {
+            console.error("Error during registration:", error.message);
+        }
+    };
+
+    if (!clerkUser || !userDetails) {
         return <p>Loading...</p>;
     }
 
-    const userImage = userDetails?.profileImage || clerkUser.imageUrl;
+    const handleLogout = async () => {
+        if (!userId) {
+            console.error("User ID is missing.");
+            return;
+        }
+
+        const lastSeen = new Date(); // Get the current timestamp
+
+        try {
+            const response = await fetch(
+                `http://localhost:5000/chat/users/${userId}/status`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        isActive: false,
+                        lastSeen: lastSeen, // Update the lastSeen field
+                    }),
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to update user status on logout");
+            }
+
+            console.log("User status updated to inactive and lastSeen updated:", lastSeen);
+
+            // You can perform any additional logout actions here, e.g., signing out from Clerk
+        } catch (error) {
+            console.error("Error during logout:", error.message);
+        }
+    };
 
     return (
         <div className="flex mt-[2rem] justify-center items-center flex-col">
@@ -315,19 +436,13 @@ const Profile = () => {
 
             <div className="text-center mt-4">
                 <p className="text-lg">
-                    Name: {userDetails?.firstName} {userDetails?.lastName}
+                    Name: {userDetails.firstName} {userDetails.lastName}
                 </p>
-                <p className="text-lg">User Name: {userDetails?.username}</p>
-                <p className="text-lg">Email: {userDetails?.email}</p>
+                <p className="text-lg">User Name: {userDetails.username}</p>
+                <p className="text-lg">Email: {userDetails.email}</p>
                 <p className="text-lg">
-                    Status: {isOnline ? "Online" : "Offline"}
+                    Status: Online
                 </p>
-                <button
-                    onClick={toggleStatus}
-                    className={`mt-4 px-4 py-2 rounded ${isOnline ? "bg-green-500" : "bg-gray-500"} text-white`}
-                >
-                    {isOnline ? "Go Offline" : "Go Online"}
-                </button>
             </div>
 
             <div className="absolute left-0 top-0 m-[2rem]">
@@ -341,8 +456,18 @@ const Profile = () => {
             </div>
 
             <div className="mt-[2rem]">
+                <button
+                    onClick={handleRegister}
+                    className="text-white bg-green-500 px-4 py-1 rounded hover:bg-green-600">
+                    Register
+                </button>
+            </div>
+
+            <div className="mt-[2rem]">
                 <SignOutButton>
-                    <button className="text-white bg-red-500 px-4 py-1 rounded hover:bg-red-600">
+                    <button
+                        onClick={handleLogout}
+                        className="text-white bg-red-500 px-4 py-1 rounded hover:bg-red-600">
                         Logout
                     </button>
                 </SignOutButton>

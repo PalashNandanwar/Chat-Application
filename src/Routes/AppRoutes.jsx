@@ -12,6 +12,13 @@ import { RedirectToSignIn } from "@clerk/clerk-react";
 const AppRoutes = () => {
     const [user, setUser] = useState(null); // user will determine the login status
 
+    const [userInfo, setUserInfo] = useState({ username: '', avatar: '' });
+
+    const handleUserInfoUpdate = (username, avatar) => {
+        setUserInfo({ username, avatar });
+        console.log("Updated Info:", { username, avatar });
+    };
+
     return (
         <Routes>
             <Route path="/" element={<HomePage user={user} setUser={setUser} />} />
@@ -19,7 +26,11 @@ const AppRoutes = () => {
                 path="/Group-Chat"
                 element={
                     <PrivateRoute>
-                        <GroupChat user={user} setUser={setUser} />
+                        <GroupChat
+                            userInfo={userInfo}
+                            onUserInfoUpdate={handleUserInfoUpdate}
+                            user={user}
+                            setUser={setUser} />
                     </PrivateRoute>
                 }
             />
@@ -27,7 +38,11 @@ const AppRoutes = () => {
                 path="/Single-chat"
                 element={
                     <PrivateRoute>
-                        <SingleChat user={user} setUser={setUser} />
+                        <SingleChat
+                            userInfo={userInfo}
+                            onUserInfoUpdate={handleUserInfoUpdate}
+                            user={user}
+                            setUser={setUser} />
                     </PrivateRoute>
                 }
             />
@@ -36,7 +51,8 @@ const AppRoutes = () => {
                 path="/Profile"
                 element={
                     <PrivateRoute>
-                        <Profile />
+                        <Profile
+                            onUserInfoUpdate={handleUserInfoUpdate} />
                     </PrivateRoute>
                 }
             />

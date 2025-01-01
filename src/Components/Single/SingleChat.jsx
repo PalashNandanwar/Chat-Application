@@ -1,211 +1,160 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import NavBar from "../NavBar";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import "./SingleChat.css";
 
-const SingleChat = ({ user, setUser, theme }) => {
+const SingleChat = ({ user, setUser, theme, userInfo, onUserInfoUpdate }) => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
-    const [selectedImage, setSelectedImage] = useState(null);
-    const [contacts] = useState([
-        {
-            name: "Jane Marry",
-            lastMessage: "okay, call me",
-            status: "online",
-            profileImage: "https://via.placeholder.com/40",
-        },
-        {
-            name: "Rahul Deshpande",
-            lastMessage: "I sent it last night",
-            status: "offline",
-            profileImage: "https://via.placeholder.com/40",
-        },
-        {
-            name: "Sandy Mandy",
-            lastMessage: "see you tomorrow",
-            status: "online",
-            profileImage: "https://via.placeholder.com/40",
-        },
-    ]);
+    const [contacts, setContacts] = useState([]);
     const [activeChat, setActiveChat] = useState(null);
-    const [isTyping, setIsTyping] = useState(false);
-    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-    const [showProfileDialog, setShowProfileDialog] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
 
-    const getInitials = (name) => {
-        return name
-            .split(" ")
-            .map((n) => n[0])
-            .join("");
-    };
-
-    const toggleProfileDialog = () => {
-        setShowProfileDialog(!showProfileDialog);
-    };
+    const filteredContacts = contacts.filter((contact) =>
+        contact.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const sendMessage = () => {
-        if (input.trim() === "" && !selectedImage) return;
+        if (input.trim() === "") return;
 
         const newMessage = {
             text: input,
             sender: "me",
-            image: selectedImage,
         };
 
         setMessages([...messages, newMessage]);
         setInput("");
-        setSelectedImage(null);
-    };
-
-    const addEmoji = (emoji) => {
-        setInput((prev) => prev + emoji);
-        setShowEmojiPicker(false);
     };
 
     useEffect(() => {
-        setIsTyping(input.length > 0);
-    }, [input]);
+        const fetchContacts = async () => {
+            try {
+                const response = await fetch("http://localhost:5000/chat/users");
+                const data = await response.json();
+                setContacts(data);
+            } catch (error) {
+                console.error("Error fetching contacts:", error);
+            }
+        };
+
+        fetchContacts();
+    }, []);
+
+    const formatLastSeen = (lastSeen) => {
+        return lastSeen
+            ? new Date(lastSeen).toLocaleString("en-US", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+            })
+            : "Unknown";
+    };
 
     return (
-        <div className={`single-chat-container ${theme}`}>
+        <div className={`flex flex-col h-screen ${theme}`}> {/* Container */}
             <NavBar user={user} setUser={setUser} />
-            <div className="chat-wrapper">
-                <div className="contacts-sidebar">
-                    <div className="search-bar">
-                        <input type="text" placeholder="Search for chat" className="find-user-input" />
-                        <span className="search-icon">🔍</span>
-                    </div>
+            <div className="flex h-full">
+                {/* Left Sidebar */}
+                <div className="w-1/4 bg-gray-100 p-4 border-r">
+                    <input
+                        type="text"
+                        placeholder="Search for chat"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full p-2 border rounded mb-4 focus:outline-none focus:ring focus:ring-blue-300"
+                    />
                     <ul>
-                        {contacts.map((contact, index) => (
+                        {filteredContacts.map((contact, index) => (
                             <li
                                 key={index}
-                                className={`contact ${activeChat?.name === contact.name ? "active" : ""}`}
+                                className={`flex items-center p-2 cursor-pointer hover:bg-gray-200 rounded ${activeChat?.name === contact.name ? "bg-gray-300" : ""
+                                    }`}
                                 onClick={() => setActiveChat(contact)}
                             >
                                 <img
-                                    src={contact.profileImage || `https://via.placeholder.com/40?text=${getInitials(contact.name)}`}
-                                    alt={`${contact.name}'s profile`}
-                                    className="contact-avatar"
-                                    onClick={toggleProfileDialog}
+                                    src={contact.profileImage}
+                                    alt="Profile"
+                                    className="w-10 h-10 rounded-full mr-3"
                                 />
-                                <div className="contact-info" onClick={toggleProfileDialog}>
-                                    <span className="contact-name">{contact.name}</span>
-                                    <span className="last-message">{contact.lastMessage}</span>
+                                <div>
+                                    <p className="font-medium">
+                                        {contact.name === userInfo.username ? "You" : contact.name}
+                                    </p>
+                                    <p className="text-sm text-gray-500">
+                                        {contact.isActive ? "Online" : formatLastSeen(contact.lastSeen)}
+                                    </p>
                                 </div>
                             </li>
                         ))}
                     </ul>
                 </div>
-                <div className="chat-box-wrapper">
-                    {activeChat && (
-                        <div className="chat-header">
-                            <div className="chat-header-info">
+
+                {/* Right Chat Box */}
+                <div className="flex flex-col flex-grow bg-white">
+                    {activeChat ? (
+                        <>
+                            {/* Chat Header */}
+                            <div className="flex items-center p-4 border-b">
                                 <img
-                                    className="header-profile-image"
                                     src={activeChat.profileImage}
-                                    alt={`${activeChat.name}'s profile`}
-                                    onClick={toggleProfileDialog}
+                                    alt="Profile"
+                                    className="w-12 h-12 rounded-full mr-3"
                                 />
-                                <div className="name-status-wrapper">
-                                    <h4 onClick={toggleProfileDialog}>{activeChat.name}</h4>
-                                    <div className="status">
-                                        <span
-                                            className={`status-dot ${activeChat.status === "online" ? "online" : "offline"
-                                                }`}
-                                        ></span>
-                                        {activeChat.status.charAt(0).toUpperCase() + activeChat.status.slice(1)}
+                                <div>
+                                    <p className="font-bold text-lg">
+                                        {activeChat.name === userInfo.username ? "You" : activeChat.name}
+                                    </p>
+                                    <p className="text-sm text-gray-500">
+                                        {activeChat.isActive
+                                            ? "Online"
+                                            : `Last seen: ${formatLastSeen(activeChat.lastSeen)}`}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Messages */}
+                            <div className="flex-grow overflow-y-auto p-4">
+                                {messages.map((message, index) => (
+                                    <div
+                                        key={index}
+                                        className={`p-2 rounded-lg mb-2 max-w-sm ${message.sender === "me"
+                                            ? "ml-auto bg-blue-500 text-white"
+                                            : "mr-auto bg-gray-200"
+                                            }`}
+                                    >
+                                        {message.text}
                                     </div>
-                                </div>
-                            </div>
-                            <div className="chat-header-actions">
-                                <button className="icon-button">
-                                    <i className="fas fa-phone"></i>
-                                </button>
-                                <button className="icon-button">
-                                    <i className="fas fa-video"></i>
-                                </button>
-                                <button className="icon-button">
-                                    <i className="fas fa-ellipsis-h"></i>
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                    <div className="chat-box">
-                        {messages.map((msg, index) => (
-                            <div
-                                key={index}
-                                className={`message ${msg.sender === "me" ? "sent" : "received"}`}
-                            >
-                                {msg.text && <p>{msg.text}</p>}
-                                {msg.image && <img src={msg.image} alt="attachment" />}
-                                <div className="message-status">
-                                    {msg.status === "read" ? "✔✔ Read" : msg.status === "delivered" ? "✔ Delivered" : "✔ Sent"}
-                                </div>
-                            </div>
-                        ))}
-                        {isTyping && (
-                            <div className="typing-indicator">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </div>
-                        )}
-                    </div>
-                    <div className="chat-input">
-                        <input
-                            type="text"
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                            placeholder="Type a message..."
-                        />
-                        <button onClick={() => setShowEmojiPicker(!showEmojiPicker)}>😊</button>
-                        {showEmojiPicker && (
-                            <div className="emoji-picker">
-                                {["😀", "😂", "😍", "😎", "😢", "😡"].map((emoji, index) => (
-                                    <button key={index} onClick={() => addEmoji(emoji)}>
-                                        {emoji}
-                                    </button>
                                 ))}
                             </div>
-                        )}
-                        <label htmlFor="file-upload" className="file-upload-button">
-                            🖼️
-                        </label>
-                        <input
-                            id="file-upload"
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => setSelectedImage(URL.createObjectURL(e.target.files[0]))}
-                            style={{ display: "none" }}
-                        />
-                        <button onClick={sendMessage}>Send</button>
-                    </div>
-                </div>
-                {showProfileDialog && (
-                    <div className="profile-dialog">
-                        <div className="dialog-content">
-                            <img
-                                className="dialog-profile-image"
-                                src={activeChat?.profileImage}
-                                alt={`${activeChat?.name}'s profile`}
-                            />
-                            <i className="fas fa-pencil-alt edit-icon"></i>
-                            <h3>{activeChat?.name}</h3>
-                            <div className="dialog-buttons">
-                                <button className="dialog-button">📹 Video Call</button>
-                                <button className="dialog-button">📞 Audio Call</button>
+
+                            {/* Input Area */}
+                            <div className="p-4 border-t">
+                                <div className="flex items-center">
+                                    <textarea
+                                        value={input}
+                                        onChange={(e) => setInput(e.target.value)}
+                                        placeholder="Type a message..."
+                                        className="w-full h-20 p-2 border rounded focus:outline-none focus:ring focus:ring-blue-300 resize-none"
+                                    />
+                                    <button
+                                        onClick={sendMessage}
+                                        className="ml-3 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                    >
+                                        <i className="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <p className="status-description">{activeChat?.status === "online" ? "Available" : "Busy, do not call"}</p>
-                            <button className="dialog-button">Add to Favourites</button>
-                            <div className="report-block">
-                                <button className="dialog-button danger">Report</button>
-                                <button className="dialog-button danger">Block</button>
-                            </div>
-                            <button className="close-dialog" onClick={toggleProfileDialog}> ✖ </button>
+                        </>
+                    ) : (
+                        <div className="flex items-center justify-center h-full text-gray-500">
+                            Select a contact to start chatting
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
         </div>
     );
