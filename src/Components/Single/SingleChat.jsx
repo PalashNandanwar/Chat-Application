@@ -1,30 +1,86 @@
-/* eslint-disable no-unused-vars */
+//* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import NavBar from "../NavBar";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
-const SingleChat = ({ user, setUser, theme, userInfo, onUserInfoUpdate }) => {
+const SingleChat = ({ user, setUser, theme, userData }) => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [contacts, setContacts] = useState([]);
     const [activeChat, setActiveChat] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
+    const [senderId, setSenderId] = useState("");
+    const [receiverId, setReceiverId] = useState("");
 
     const filteredContacts = contacts.filter((contact) =>
         contact.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const sendMessage = () => {
+    // Update senderId based on userData
+    useEffect(() => {
+        if (userData) {
+            setSenderId(userData.userId);
+        }
+    }, [userData]);
+
+    // Fetch messages when activeChat changes
+    useEffect(() => {
+        if (activeChat) {
+            setReceiverId(activeChat._id || null);
+            fetchMessages(activeChat._id);
+        }
+    }, [activeChat]);
+
+    // Fetch messages between sender and receiver
+    const fetchMessages = async (receiverId) => {
+        try {
+            const response = await fetch(
+                `http://localhost:5000/chat/messages?senderId=${senderId}&receiverId=${receiverId}`
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+                setMessages(data.messages);
+            } else {
+                console.error("Failed to fetch messages:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error while fetching messages:", error);
+        }
+    };
+
+    const sendMessage = async () => {
         if (input.trim() === "") return;
 
         const newMessage = {
-            text: input,
-            sender: "me",
+            senderId: senderId,
+            receiverId: receiverId, // Null for group messages
+            message: input,
         };
 
-        setMessages([...messages, newMessage]);
-        setInput("");
+        try {
+            const response = await fetch("http://localhost:5000/chat/messages", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(newMessage),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Message sent successfully:", data);
+
+                // Update messages in UI
+                setMessages([...messages, { ...newMessage, sender: "me" }]);
+                setInput("");
+            } else {
+                console.error("Failed to send message:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error while sending message:", error);
+        }
     };
 
     useEffect(() => {
@@ -55,7 +111,7 @@ const SingleChat = ({ user, setUser, theme, userInfo, onUserInfoUpdate }) => {
     };
 
     return (
-        <div className={`flex flex-col h-screen ${theme}`}> {/* Container */}
+        <div className={`flex flex-col h-screen ${theme}`}>
             <NavBar user={user} setUser={setUser} />
             <div className="flex h-full">
                 {/* Left Sidebar */}
@@ -82,10 +138,12 @@ const SingleChat = ({ user, setUser, theme, userInfo, onUserInfoUpdate }) => {
                                 />
                                 <div>
                                     <p className="font-medium">
-                                        {contact.name === userInfo.username ? "You" : contact.name}
+                                        {contact.name === userData.username ? "You" : contact.name}
                                     </p>
                                     <p className="text-sm text-gray-500">
-                                        {contact.isActive ? "Online" : formatLastSeen(contact.lastSeen)}
+                                        {contact.isActive
+                                            ? "Online"
+                                            : formatLastSeen(contact.lastSeen)}
                                     </p>
                                 </div>
                             </li>
@@ -106,7 +164,9 @@ const SingleChat = ({ user, setUser, theme, userInfo, onUserInfoUpdate }) => {
                                 />
                                 <div>
                                     <p className="font-bold text-lg">
-                                        {activeChat.name === userInfo.username ? "You" : activeChat.name}
+                                        {activeChat.name === userData.username
+                                            ? "You"
+                                            : activeChat.name}
                                     </p>
                                     <p className="text-sm text-gray-500">
                                         {activeChat.isActive
@@ -119,15 +179,27 @@ const SingleChat = ({ user, setUser, theme, userInfo, onUserInfoUpdate }) => {
                             {/* Messages */}
                             <div className="flex-grow overflow-y-auto p-4">
                                 {messages.map((message, index) => (
-                                    <div
-                                        key={index}
-                                        className={`p-2 rounded-lg mb-2 max-w-sm ${message.sender === "me"
-                                            ? "ml-auto bg-blue-500 text-white"
-                                            : "mr-auto bg-gray-200"
-                                            }`}
-                                    >
-                                        {message.text}
-                                    </div>
+                                    <>
+                                        {console.log(messages)}
+                                        < div
+                                            key={index}
+                                            className={`p-2 rounded-lg mb-2 max-w-sm ${message.senderId === userData.userId
+                                                ? "ml-auto bg-blue-500 text-white"
+                                                : "mr-auto bg-gray-200"
+                                                }`}
+                                        >
+                                            {/* Display the sender's name */}
+                                            <div className="text-xs text-black mb-1">
+                                                {message.senderId === userData.userId
+                                                    ? "You"
+                                                    : activeChat.name}
+                                            </div>
+                                            {/* Display the message */}
+                                            <div className=" text-lg">{message.message}</div>
+
+                                            <span className="text-[9px]">{new Date(message.timestamp).toLocaleString()}</span>
+                                        </div>
+                                    </>
                                 ))}
                             </div>
 
@@ -156,7 +228,7 @@ const SingleChat = ({ user, setUser, theme, userInfo, onUserInfoUpdate }) => {
                     )}
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 
