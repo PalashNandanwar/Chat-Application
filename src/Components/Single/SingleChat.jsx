@@ -132,7 +132,7 @@ const SingleChat = ({ user, setUser, theme, userData }) => {
                                 onClick={() => setActiveChat(contact)}
                             >
                                 <img
-                                    src={contact.profileImage}
+                                    src={contact.name === userData.username ? userData.image : contact.image}
                                     alt="Profile"
                                     className="w-10 h-10 rounded-full mr-3"
                                 />

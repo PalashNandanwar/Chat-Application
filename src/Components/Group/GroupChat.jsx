@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import NavBar from '../NavBar';
 import ChatWindow from './ChatWindow';
+import img5 from "../../assets/profile1.png";
 
 const GroupChat = ({ user, setUser, userData }) => {
     const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
@@ -12,6 +13,7 @@ const GroupChat = ({ user, setUser, userData }) => {
     const [groups, setGroups] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [error, setError] = useState(null);
+
 
     // Fetch users for adding members
     useEffect(() => {
@@ -55,7 +57,11 @@ const GroupChat = ({ user, setUser, userData }) => {
             return;
         }
 
-        const groupPayload = { groupName, memberIds: members };
+        const groupPayload = {
+            groupName,
+            memberIds: members,
+            admin: user._id
+        };
 
         try {
             const response = await fetch('http://localhost:5000/chat/createGroup', {
@@ -119,14 +125,21 @@ const GroupChat = ({ user, setUser, userData }) => {
                              ${selectedGroup?._id === group._id ? "border-blue-500 bg-blue-500" : "hover:bg-gray-100"}`}
                                 onClick={() => setSelectedGroup(group)}
                             >
-                                <h3 className="font-semibold text-lg text-gray-900">{group.name}</h3>
+                                <div className="flex items-center">
+                                    <img
+                                        src={img5} // Use selected pic or default
+                                        alt="P"
+                                        className="w-11 h-11 rounded-full mr-4"
+                                    />
+                                    <h3 className="font-semibold text-lg text-gray-900">{group.name}</h3>
+                                </div>
                             </div>
                         ))}
                     </div>
                 </div>
 
                 {/* Chat Window */}
-                <div className="flex-1 flex flex-col overflow-hidden">
+                <div className="flex-1 flex flex-col ">
                     {selectedGroup ? (
                         <ChatWindow group={selectedGroup} />
                     ) : (
@@ -163,6 +176,7 @@ const GroupChat = ({ user, setUser, userData }) => {
                                 </div>
                             ))}
                         </div>
+
                         <button className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 w-full" onClick={createGroup}>Create Group</button>
                         <button className="bg-gray-500 text-white p-2 rounded-full hover:bg-gray-600 w-full mt-2" onClick={handleModalClose}>Cancel</button>
                     </div>

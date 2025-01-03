@@ -1,11 +1,13 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
-import { AiOutlineSend } from 'react-icons/ai';
+import { AiOutlineSend, AiOutlineInfoCircle } from 'react-icons/ai';
+import img5 from "../../assets/profile1.png";
 
 const ChatWindow = ({ group }) => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
     const [error, setError] = useState(null);
+    const [showGroupInfo, setShowGroupInfo] = useState(false); // State to toggle the modal
 
     useEffect(() => {
         // Fetch messages for the selected group
@@ -16,10 +18,10 @@ const ChatWindow = ({ group }) => {
                     throw new Error('Failed to fetch messages');
                 }
                 const data = await response.json();
-                console.log("Messages fetched successfully:", data);
+                console.log(".", data);
                 setMessages(data);
             } catch (error) {
-                setError('Failed to fetch messages');
+                setError('.');
                 console.error("Error fetching messages:", error);
             }
         };
@@ -40,14 +42,14 @@ const ChatWindow = ({ group }) => {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to send message');
+                throw new Error('.');
             }
 
             const message = await response.json();
             setMessages((prevMessages) => [...prevMessages, message]);
             setNewMessage("");
         } catch (error) {
-            setError('Failed to send message');
+            setError('.');
             console.error("Error sending message:", error);
         }
     };
@@ -56,10 +58,16 @@ const ChatWindow = ({ group }) => {
         <div className="flex flex-col h-[85vh] w-[75vw] bg-white shadow-lg">
             {/* Chat Header */}
             <div className="bg-blue-600 p-4 flex items-center justify-between">
-                <div>
+                <div className="flex items-center">
+                <img src={img5} alt="Group Profile Picture" className="w-10 h-10 rounded-full mr-3" />
                     <h2 className="text-xl font-semibold text-white">{group.name}</h2>
-                    <p className="text-sm text-blue-200">Active now</p>
                 </div>
+                <button
+                    onClick={() => setShowGroupInfo(true)} // Trigger modal open
+                    className="text-white p-2 rounded-full hover:bg-blue-700"
+                >
+                    <AiOutlineInfoCircle size={24}/>
+                </button>
             </div>
 
             {/* Chat Messages */}
@@ -103,7 +111,24 @@ const ChatWindow = ({ group }) => {
                 </div>
                 {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
             </div>
+
+            {/* Group Info Modal */}
+            {showGroupInfo && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+                        <h3 className="text-xl font-semibold mb-4">{group.name}</h3>
+                        <p><strong>Total Members:</strong> {group.members.length}</p>
+                        <button
+                            onClick={() => setShowGroupInfo(false)} // Close modal
+                            className="mt-4 bg-gray-500 text-white p-2 rounded-full w-full"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
-}
+};
+
 export default ChatWindow;

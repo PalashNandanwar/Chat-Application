@@ -1,226 +1,3 @@
-// /* eslint-disable no-undef */
-// const express = require('express');
-// const mongoose = require('mongoose');
-// const bodyParser = require('body-parser');
-// const cors = require('cors'); // Import cors middleware
-// require('dotenv').config();
-
-// const app = express();
-
-// // Middleware
-// app.use(bodyParser.json());
-// app.use(cors()); // Enable CORS for all routes and origins
-
-// // MongoDB connection
-// mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-//     .then(() => console.log('MongoDB connected'))
-//     .catch(err => console.error('MongoDB connection error:', err));
-
-// // User Schema with active status and lastSeen field
-// const userSchema = new mongoose.Schema({
-//     name: { type: String, required: true },
-//     email: { type: String, required: true, unique: true },
-//     password: { type: String, required: true },
-//     isActive: { type: Boolean, default: false }, // Track active status
-//     lastSeen: { type: Date, default: null } // Store last logout timestamp
-// });
-
-// const conversationSchema = new mongoose.Schema({
-//     sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to the User model
-//     receiver: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to the User model
-//     message: { type: String, required: true },
-//     timestamp: { type: Date, default: Date.now } // Timestamp for the message
-// });
-
-// const User = mongoose.model('User', userSchema);
-// const Conversation = mongoose.model('Conversation', conversationSchema);
-
-// // Routes
-// // POST route to create a user
-// app.post('/chat/users', async (req, res) => {
-//     try {
-//         const { name, email, password, isActive } = req.body;
-
-//         // Check if email is already in use
-//         let user = await User.findOne({ email });
-
-//         if (user) {
-//             // If the user exists, update their details
-//             user.name = name || user.name;
-//             user.password = password || user.password;
-//             user.isActive = isActive !== undefined ? isActive : user.isActive;
-//             await user.save();
-//             return res.status(200).json({ message: 'User updated successfully', user });
-//         }
-
-//         // If user does not exist, create a new user
-//         const newUser = new User({
-//             name,
-//             email,
-//             password,
-//             isActive: isActive || false
-//         });
-
-//         await newUser.save();
-//         res.status(201).json({ message: 'User created successfully', user: newUser });
-//     } catch (error) {
-//         res.status(400).json({ error: error.message });
-//     }
-// });
-
-// // POST route for user login
-// app.post('/chat/users/login', async (req, res) => {
-//     try {
-//         const { email, password } = req.body;
-
-//         // Find the user by email
-//         const user = await User.findOne({ email });
-//         if (!user) {
-//             return res.status(404).json({ error: 'User not found' });
-//         }
-
-//         // Verify password (in production, use hashed passwords)
-//         if (user.password !== password) {
-//             return res.status(401).json({ error: 'Invalid credentials' });
-//         }
-
-//         // Check if first login
-//         const isFirstLogin = user.lastSeen === null;
-
-//         // Update active status
-//         user.isActive = true;
-//         await user.save();
-
-//         res.status(200).json({ message: isFirstLogin ? 'Welcome, first login!' : 'Welcome back!', user });
-//     } catch (error) {
-//         res.status(500).json({ error: error.message });
-//     }
-// });
-
-// // POST route for user logout
-// app.post('/chat/users/logout', async (req, res) => {
-//     try {
-//         const { email } = req.body;
-
-//         // Find the user by email
-//         const user = await User.findOne({ email });
-//         if (!user) {
-//             return res.status(404).json({ error: 'User not found' });
-//         }
-
-//         // Update active status and set lastSeen timestamp
-//         user.isActive = false;
-//         user.lastSeen = new Date();
-//         await user.save();
-
-//         res.status(200).json({ message: 'User logged out successfully', user });
-//     } catch (error) {
-//         res.status(500).json({ error: error.message });
-//     }
-// });
-
-// // GET route to fetch all users
-// app.get('/chat/users', async (req, res) => {
-//     try {
-//         const users = await User.find();
-//         res.status(200).json(users);
-//     } catch (error) {
-//         res.status(500).json({ error: error.message });
-//     }
-// });
-
-// // PUT route to update the active status of a user
-// app.put('/chat/users/:userId/status', async (req, res) => {
-//     try {
-//         const { userId } = req.params;
-//         const { isActive, lastSeen } = req.body;  // Add lastSeen in the request body
-
-//         // Find the user in the database
-//         const user = await User.findById(userId);
-//         if (!user) {
-//             return res.status(404).json({ error: 'User not found' });
-//         }
-
-//         // Update the user's status and lastSeen
-//         user.isActive = isActive;
-//         user.lastSeen = lastSeen;  // Set the lastSeen field
-
-//         // Save the updated user
-//         await user.save();
-
-//         // Respond with a success message
-//         res.status(200).json({ message: 'User status and lastSeen updated successfully', user });
-//     } catch (error) {
-//         res.status(500).json({ error: error.message });
-//     }
-// });
-
-// // POST route to create a new conversation
-// app.post('/chat/conversations', async (req, res) => {
-//     try {
-//         const { sender, receiver, message, timestamp } = req.body;
-
-//         // Validate required fields
-//         if (!sender || !receiver || !message) {
-//             return res.status(400).json({ error: 'Sender, receiver, and message are required' });
-//         }
-
-//         // Check if both users are active
-//         const senderUser = await User.findById(sender);
-//         const receiverUser = await User.findById(receiver);
-
-//         if (!senderUser || !receiverUser) {
-//             return res.status(404).json({ error: 'User not found' });
-//         }
-
-//         if (!senderUser.isActive || !receiverUser.isActive) {
-//             return res.status(400).json({ error: 'Both users must be active to send messages' });
-//         }
-
-//         // Create a new conversation entry
-//         const newConversation = new Conversation({ sender, receiver, message, timestamp });
-
-//         // Save the conversation in the database
-//         await newConversation.save();
-
-//         res.status(201).json({ message: 'Conversation stored successfully', conversation: newConversation });
-//     } catch (error) {
-//         res.status(500).json({ error: error.message });
-//     }
-// });
-
-// // GET route to fetch conversations between two users
-// app.get('/chat/conversations', async (req, res) => {
-//     try {
-//         const { user1, user2 } = req.query;
-
-//         // Validate required fields
-//         if (!user1 || !user2) {
-//             return res.status(400).json({ error: 'Both user1 and user2 are required' });
-//         }
-
-//         // Fetch conversations where either user is the sender or receiver
-//         const conversations = await Conversation.find({
-//             $or: [
-//                 { sender: user1, receiver: user2 },
-//                 { sender: user2, receiver: user1 }
-//             ]
-//         })
-//             .sort({ timestamp: 1 }) // Sort by timestamp (earliest first)
-//             .populate('sender', 'name email') // Populate sender details
-//             .populate('receiver', 'name email'); // Populate receiver details
-
-//         res.status(200).json({ conversations });
-//     } catch (error) {
-//         res.status(500).json({ error: error.message });
-//     }
-// });
-
-// // Start server
-// const PORT = process.env.PORT || 5000;
-// app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-
 /* eslint-disable no-undef */
 const express = require('express');
 const mongoose = require('mongoose');
@@ -279,9 +56,20 @@ const groupSchema = new mongoose.Schema({
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] // Member references
 });
 
+// Group Message Schema 
+const GroupmessageSchema = new mongoose.Schema({
+    groupId: { type: mongoose.Schema.Types.ObjectId, ref: 'Group', required: true }, // Reference to the Group
+    senderId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to the User who sent the message
+    content: { type: String, required: true }, // The message content
+    timestamp: { type: Date, default: Date.now }, // Timestamp for when the message was sent
+    attachments: [{ type: String }] // Array of attachment URLs (optional)
+});
+
+
 const User = mongoose.model('User', userSchema);
 const Message = mongoose.model('Message', messageSchema);
 const Group = mongoose.model('Group', groupSchema);
+const Group_Message = mongoose.model('Group_Message', GroupmessageSchema);
 
 // Routes
 // POST route to create a user
@@ -453,7 +241,7 @@ app.get('/chat/groups/:userId', async (req, res) => {
     }
 });
 
-// Get all groups
+//Get all groups
 app.get('/grp', async (req, res) => {
     try {
         const groups = await Group.find(); // Fetch groups
@@ -463,6 +251,54 @@ app.get('/grp', async (req, res) => {
     }
 });
 
+//Send Messages to the Group 
+app.post('/chat/groups/:groupId/messages', async (req, res) => {
+    try {
+        const { groupId } = req.params;
+        const { senderId, content, attachments } = req.body;
+
+        // Validate inputs
+        if (!senderId || !content) {
+            return res.status(400).json({ error: "Invalid input" });
+        }
+
+        // Verify group exists
+        const group = await Group.findById(groupId);
+        if (!group) {
+            return res.status(404).json({ error: "Group not found" });
+        }
+
+        // Create and save the message
+        const message = new Group_Message({
+            groupId,
+            senderId,
+            content,
+            attachments
+        });
+
+        await message.save();
+
+        res.status(201).json({ message: "Message sent", data: message });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+//Get the Group Messages
+app.get('/chat/groups/:groupId/messages', async (req, res) => {
+    try {
+        const { groupId } = req.params;
+
+        // Fetch messages for the group
+        const messages = await Group_Message.find({ groupId })
+            .populate('senderId', 'name email') // Populate sender details
+            .sort({ timestamp: 1 }); // Sort messages by timestamp (oldest first)
+
+        res.status(200).json(messages);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 // Start server
 const PORT = process.env.PORT || 5000;
