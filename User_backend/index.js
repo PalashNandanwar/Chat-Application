@@ -18,11 +18,27 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 
 // User Schema with active status and lastSeen field
 const userSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    isActive: { type: Boolean, default: false },
-    lastSeen: { type: Date, default: null }
+    name: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    isActive: {
+        type: Boolean,
+        default: false
+    },
+    lastSeen: {
+        type: Date,
+        default: null
+    }
 });
 // Message Schema
 const messageSchema = new mongoose.Schema({
@@ -52,17 +68,39 @@ const messageSchema = new mongoose.Schema({
 
 // Group Schema
 const groupSchema = new mongoose.Schema({
-    name: { type: String, required: true }, // Group name
-    members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] // Member references
+    name: {
+        type: String,
+        required: true
+    }, // Group name
+    members: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }] // Member references
 });
 
 // Group Message Schema 
 const GroupmessageSchema = new mongoose.Schema({
-    groupId: { type: mongoose.Schema.Types.ObjectId, ref: 'Group', required: true }, // Reference to the Group
-    senderId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to the User who sent the message
-    content: { type: String, required: true }, // The message content
-    timestamp: { type: Date, default: Date.now }, // Timestamp for when the message was sent
-    attachments: [{ type: String }] // Array of attachment URLs (optional)
+    groupId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Group',
+        required: true
+    }, // Reference to the Group
+    senderId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    }, // Reference to the User who sent the message
+    content: {
+        type: String,
+        required: true
+    }, // The message content
+    timestamp: {
+        type: Date,
+        default: Date.now
+    }, // Timestamp for when the message was sent
+    attachments: [{
+        type: String
+    }] // Array of attachment URLs (optional)
 });
 
 
@@ -262,7 +300,7 @@ app.post('/chat/groups/:groupId/messages', async (req, res) => {
             return res.status(400).json({ error: "Invalid input" });
         }
 
-        // Verify group exists
+        // Verify if the group exists
         const group = await Group.findById(groupId);
         if (!group) {
             return res.status(404).json({ error: "Group not found" });
@@ -273,16 +311,18 @@ app.post('/chat/groups/:groupId/messages', async (req, res) => {
             groupId,
             senderId,
             content,
-            attachments
+            attachments: attachments || [],
         });
 
         await message.save();
 
         res.status(201).json({ message: "Message sent", data: message });
     } catch (error) {
+        console.error(error); // Log error for debugging
         res.status(500).json({ error: error.message });
     }
 });
+
 
 //Get the Group Messages
 app.get('/chat/groups/:groupId/messages', async (req, res) => {
