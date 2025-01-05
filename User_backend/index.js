@@ -67,15 +67,33 @@ const messageSchema = new mongoose.Schema({
 });
 
 // Group Schema
+// const groupSchema = new mongoose.Schema({
+//     name: {
+//         type: String,
+//         required: true
+//     }, // Group name
+//     members: [{
+//         type: mongoose.Schema.Types.ObjectId,
+//         ref: 'User'
+//     }] // Member references
+// });
+
 const groupSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true
     }, // Group name
     members: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    }] // Member references
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        }, // Reference to User
+        name: {
+            type: String,
+            required: true
+        } // Name of the user (can be fetched from User schema)
+    }] // Array of member references and their names
 });
 
 // Group Message Schema 
@@ -238,6 +256,36 @@ app.get('/chat/messages', async (req, res) => {
 });
 
 // POST route to create a group
+// app.post('/chat/createGroup', async (req, res) => {
+//     try {
+//         const { groupName, memberIds } = req.body;
+
+//         // Validate input
+//         if (!groupName || !Array.isArray(memberIds)) {
+//             return res.status(400).json({ error: "Invalid input" });
+//         }
+
+//         // Check if provided member IDs exist in the database
+//         const members = await User.find({ _id: { $in: memberIds } });
+//         if (members.length !== memberIds.length) {
+//             return res.status(400).json({ error: "One or more member IDs are invalid." });
+//         }
+
+//         // Create a new group
+//         const newGroup = new Group({
+//             name: groupName,
+//             members: memberIds
+//         });
+
+//         // Save group to database
+//         await newGroup.save();
+
+//         res.status(201).json({ message: 'Group created successfully', group: newGroup });
+//     } catch (error) {
+//         res.status(500).json({ error: error.message });
+//     }
+// });
+
 app.post('/chat/createGroup', async (req, res) => {
     try {
         const { groupName, memberIds } = req.body;
@@ -247,16 +295,22 @@ app.post('/chat/createGroup', async (req, res) => {
             return res.status(400).json({ error: "Invalid input" });
         }
 
-        // Check if provided member IDs exist in the database
+        // Check if provided member IDs exist in the database and get their names
         const members = await User.find({ _id: { $in: memberIds } });
         if (members.length !== memberIds.length) {
             return res.status(400).json({ error: "One or more member IDs are invalid." });
         }
 
+        // Prepare the members array with user references and names
+        const memberDetails = members.map(user => ({
+            user: user._id,
+            name: user.name
+        }));
+
         // Create a new group
         const newGroup = new Group({
             name: groupName,
-            members: memberIds
+            members: memberDetails  // Add the member details (user and name)
         });
 
         // Save group to database
@@ -267,6 +321,7 @@ app.post('/chat/createGroup', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
 
 //Fetch Groups by User ID
 app.get('/chat/groups/:userId', async (req, res) => {

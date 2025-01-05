@@ -63,6 +63,7 @@ const ChatWindow = ({ group, userData }) => {
     return (
         <div className="flex flex-col h-screen w-full bg-white shadow-lg">
             {/* Chat Header */}
+
             <div className="bg-blue-600 p-3 flex items-center justify-between">
                 <div className="flex items-center">
                     <img src={img5} alt="Group Profile" className="w-10 h-10 rounded-full mr-3" />
@@ -123,11 +124,17 @@ const ChatWindow = ({ group, userData }) => {
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-white rounded-lg p-6 w-80 sm:w-96">
                         <h3 className="text-xl font-semibold mb-4">Group Info</h3>
-                        {console.log(group)
-                        }
+                        {console.log(group)}
                         <p className="text-lg font-medium">Group Name: {group.name}</p>
                         <p className="text-base text-gray-600 mb-4">Members: {group.members.length}</p>
 
+                        <ul className="ml-4">
+                            {group.members && group.members.map((memberArray, idx) => (
+                                // console.log(memberArray.name)
+
+                                <li key={idx} className="text-gray-700 text-[15px]">{memberArray.name === userData.username ? "You" : memberArray.name}</li> // Access the name inside the nested array
+                            ))}
+                        </ul>
                         <button
                             onClick={() => setShowGroupInfo(false)} // Close modal
                             className="mt-4 bg-blue-600 text-white p-2 rounded-full w-full hover:bg-blue-700"
